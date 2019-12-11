@@ -3,6 +3,9 @@ source_file = "spreadspoke_scores.csv"
 #dest_file
 
 def main():
+    read_csv(source_file)
+
+def read_csv(source_file):
     final_list = []
     with open(source_file) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter =",")
@@ -42,8 +45,11 @@ def main():
                 elif int(row[13]) < int(row[14]):
                     label = -1
                 datapoint.append(label)
-                print(datapoint)
+                #print(datapoint)
+                final_list.append(datapoint)
             line_count +=1
+
+        return final_list
 
 def weeks(week):
     list = []
