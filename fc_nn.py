@@ -2,7 +2,7 @@
 import numpy as np
 import tensorflow as tf
 
-from tensorflow.keras.layers import Dense, Flatten, Conv2D
+from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras import Model
 
 ##################
@@ -19,16 +19,17 @@ class FCmodel(Model):
 
         # TODO set up architecture, for example:
         #self.d1 = Dense(<num hidden units>, <activation function>)
-        # use 4000 units in the hidden layer, num classes is 10
-        self.f = Flatten()
-        self.d1 = Dense(4000, tf.nn.relu)
-        self.d2 = Dense(10, tf.nn.softmax)
+        # use 4000 units in the hidden layer, num classes is 3
+        #self.f = Model.Input(shape=(93,))
+        self.d1 = Dense(10, tf.nn.relu, input_shape=(93,))
+        self.d2 = Dense(3, tf.nn.softmax)
 
     def call(self, x):
 
         # TODO apply each layer from the constructor to x, returning
         # the output of the last layer
-        x = self.f(x)
+        #x = self.f(x)
+        tf.reshape(x, (1,93))
         x = self.d1(x)
         x = self.d2(x)
         return x
