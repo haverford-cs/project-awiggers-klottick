@@ -6,7 +6,35 @@ def main():
     read_csv(source_file)
 
 def read_csv(source_file):
-    final_list = []
+    train_data = []
+    test_data = []
+
+    #array indexed by years (subtract of 1979 to get index),
+    #teams (assigned indexes by team_vals), wins/losses/ties (0/1/2)
+    records = []
+    for i in range(39):
+        year = []
+        records.append(year)
+        for j in range(32):
+            team = []
+            records[i].append(team)
+            for k in range(3):
+                records[i][j].append(0)
+
+    #array indexed by years (subtract of 1979 to get index),
+    #teams (assigned indexes by team_vals), teams they've played
+    #the value is the number of times the 1st team has beaten the 2nd that season
+    winMatrix = []
+    for i in range(39):
+        year = []
+        winMatrix.append(year)
+        for j in range(32):
+            team = []
+            winMatrix[i].append(team)
+            for k in range(32):
+                winMatrix[i][j].append(0)
+
+
     with open(source_file) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter =",")
         line_count = 1
@@ -14,13 +42,16 @@ def read_csv(source_file):
             if line_count >= 2503 and row[9] != '':
                 datapoint = []
                 #schedule season
-                datapoint.append(int(row[1])-1979)
+                year = int(row[1])-1979
+                datapoint.append(year)
                 #week
                 datapoint = datapoint + weeks(row[2])
                 #home team
-                datapoint = datapoint + team_vals(row[3])
+                home_vals,home_id = team_vals(row[3])
+                datapoint = datapoint + home_vals
                 #away team
-                datapoint = datapoint + team_vals(row[4])
+                away_vals,away_id = team_vals(row[4])
+                datapoint = datapoint + away_vals
                 #spread
                 if row[3] == row[6]:
                     datapoint.append(float(row[7]))
@@ -38,18 +69,46 @@ def read_csv(source_file):
                 else:
                     datapoint.append(1)
 
-                #label
+                #add records for home and away teams this season
+                datapoint.append(records[year][home_id][0])
+                datapoint.append(records[year][home_id][1])
+                datapoint.append(records[year][home_id][2])
+                datapoint.append(records[year][away_id][0])
+                datapoint.append(records[year][away_id][1])
+                datapoint.append(records[year][away_id][2])
+
+                #append matrix of whose beaten who
+                for i in range(32):
+                    for j in range(32):
+                        datapoint.append(winMatrix[year][i][j])
+
+                #assign label and update records
                 label = 1
+                #home wins
                 if int(row[13]) > int(row[14]):
                     label = 2
+                    records[year][home_id][0] +=1
+                    records[year][away_id][1] +=1
+                    winMatrix[year][home_id][away_id] +=1
+                #away wins
                 elif int(row[13]) < int(row[14]):
                     label = 0
+                    records[year][home_id][1] +=1
+                    records[year][away_id][0] +=1
+                    winMatrix[year][away_id][home_id] +=1
+                #tie
+                else:
+                    records[year][home_id][2] +=1
+                    records[year][away_id][2] +=1
+
                 datapoint.append(label)
-                #print(datapoint)
-                final_list.append(datapoint)
+                if year + 1979 < 2015:
+                    train_data.append(datapoint)
+                else:
+                    test_data.append(datapoint)
             line_count +=1
 
-        return final_list
+        return train_data,test_data
 
 def weeks(week):
     list = []
@@ -127,7 +186,7 @@ def team_vals(team_id):
         team_features.append(0)
 
     team_features[pos_id] = 1
-    return team_features
+    return team_features,pos_id
 
 if __name__ == "__main__" :
     main()
