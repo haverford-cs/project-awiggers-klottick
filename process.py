@@ -12,7 +12,7 @@ def get_bookie_score(source_file):
         line_count = 1
         for row in csv_reader:
             if line_count >= 2503:
-
+                pass
             line_count+=1
 def read_csv(source_file):
     train_data = []
