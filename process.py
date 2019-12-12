@@ -4,7 +4,16 @@ source_file = "spreadspoke_scores.csv"
 
 def main():
     read_csv(source_file)
+def get_bookie_score(source_file):
+    with open(source_file) as csv_file:
+        total = 0
+        correct = 0
+        csv_reader = csv.reader(csv_file, delimiter =",")
+        line_count = 1
+        for row in csv_reader:
+            if line_count >= 2503:
 
+            line_count+=1
 def read_csv(source_file):
     train_data = []
     test_data = []
