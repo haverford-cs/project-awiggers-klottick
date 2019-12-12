@@ -39,11 +39,11 @@ def read_csv(source_file):
                     datapoint.append(1)
 
                 #label
-                label = 0
+                label = 1
                 if int(row[13]) > int(row[14]):
-                    label = 1
+                    label = 2
                 elif int(row[13]) < int(row[14]):
-                    label = -1
+                    label = 0
                 datapoint.append(label)
                 #print(datapoint)
                 final_list.append(datapoint)
