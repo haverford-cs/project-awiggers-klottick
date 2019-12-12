@@ -3,7 +3,7 @@ source_file = "spreadspoke_scores.csv"
 #dest_file
 
 def main():
-    read_csv(source_file)
+    read_csv(source_file,1979)
 def get_bookie_score(source_file):
     with open(source_file) as csv_file:
         total = 0
@@ -24,7 +24,7 @@ def get_bookie_score(source_file):
                 total+=1
             line_count+=1
         return correct, total, correct /total
-def read_csv(source_file):
+def read_csv(source_file, min_year):
     train_data = []
     test_data = []
 
@@ -121,10 +121,11 @@ def read_csv(source_file):
                     records[year][away_id][2] +=1
 
                 datapoint.append(label)
-                if year + 1979 < 2015:
-                    train_data.append(datapoint)
-                else:
-                    test_data.append(datapoint)
+                if year + 1979 >= min_year:
+                    if year + 1979 < 2015:
+                        train_data.append(datapoint)
+                    else:
+                        test_data.append(datapoint)
             line_count +=1
         return train_data,test_data
 
