@@ -16,7 +16,7 @@ def get_bookie_score(source_file):
                     if row[3] == row[6]:
                         correct+=1
                 elif int(row[13]) < int(row[14]):
-                    if (row[3] != row[6] and row[6] != "PICK":
+                    if (row[3] != row[6] and row[6] != "PICK"):
                         correct+=1
                 else:
                     if (row[6] == "PICK"):
