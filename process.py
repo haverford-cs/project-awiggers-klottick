@@ -12,8 +12,18 @@ def get_bookie_score(source_file):
         line_count = 1
         for row in csv_reader:
             if line_count >= 2503:
-                pass
+                if int(row[13]) > int(row[14]):
+                    if row[3] == row[6]:
+                        correct+=1
+                elif int(row[13]) < int(row[14]):
+                    if (row[3] != row[6] and row[6] != "PICK":
+                        correct+=1
+                else:
+                    if (row[6] == "PICK"):
+                        correct+=1
+                total+=1
             line_count+=1
+        return correct, total, correct /total
 def read_csv(source_file):
     train_data = []
     test_data = []
