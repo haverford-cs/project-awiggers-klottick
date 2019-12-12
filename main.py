@@ -17,7 +17,7 @@ def main():
 
 
     train_dset = tf.data.Dataset.from_tensor_slices((X, y))
-    train_dset = train_dset.shuffle(X_train.shape[0])
+    train_dset = train_dset.shuffle(X.shape[0])
 
     inputs = tf.keras.Input(shape = (92,), name = "input")
     x = Dense(10, tf.nn.relu)(inputs)
@@ -31,10 +31,8 @@ def main():
               metrics=[keras.metrics.SparseCategoricalAccuracy()])
 
     history = model.fit(X, y, batch_size=1, epochs=10, validation_split = 0.1)
-                    # We pass some validation for
-                    # monitoring validation loss and metrics
-                    # at the end of each epoch
 
+    print(history.history)
 
 if __name__ == "__main__" :
     main()
