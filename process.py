@@ -116,7 +116,6 @@ def read_csv(source_file):
                 else:
                     test_data.append(datapoint)
             line_count +=1
-
         return train_data,test_data
 
 def weeks(week):
