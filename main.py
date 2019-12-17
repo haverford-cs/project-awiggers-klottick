@@ -18,7 +18,7 @@ output_file = "results.txt"
 
 def main():
     year = 0
-    epochs = 10
+    epochs = 5
     batch_size = 50
     single_test(year, epochs, batch_size)
     #multi_test(epochs, batch_size)
@@ -143,8 +143,8 @@ def train(X, y, epochs, model, val_data, batch_size):
     fit the given training data (X,y) to given model.
     Use given validation data and batch size.
     """
-        history = model.fit(X, y, batch_size=batch_size, epochs=epochs, validation_data = val_data)
-        return history
+    history = model.fit(X, y, batch_size=batch_size, epochs=epochs, validation_data = val_data)
+    return history
 
 def test(x_test, y_test, model, batch_size = 1):
     """
