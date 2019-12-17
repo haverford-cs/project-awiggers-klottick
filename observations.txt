@@ -1,0 +1,3 @@
+Validation oscilates sinusoidally with number of epochs
+
+peaks earlier with full dataset
