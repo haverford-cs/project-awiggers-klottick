@@ -5,7 +5,7 @@ from process import *
 import numpy as np
 
 def main():
-    train_data,test_data = read_csv(source_file, 0)
+    train_data,test_data, current_data = read_csv(source_file, 0)
     train_data = np.array(train_data)
     #shuffle training data
     np.random.shuffle(train_data)
@@ -30,21 +30,21 @@ def main():
 
 
     #KNN
-    '''
+    print("KNN")
     for i in range(1, 21):
         neigh = KNeighborsClassifier(n_neighbors=i)
         neigh.fit(X_train, y_train)
         print(str(i) + ": " + str(neigh.score(X_test, y_test)))
-    '''
+    
     #Decision trees
-    '''
+    print("Decision Trees")
     for i in range(0, 15):
         dtree = neigh = DecisionTreeClassifier(random_state = 0, max_depth = i*10+1)
         dtree.fit(X_train, y_train)
         print(str(i * 10) + ": " + str(dtree.score(X_test, y_test)))
         print(np.argmax(dtree.feature_importances_))
         print("")
-    '''
+    print("SVM")
     #svm
     svm = SVC(gamma = "auto")
     svm.fit(X_train, y_train)

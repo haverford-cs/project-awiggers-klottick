@@ -21,8 +21,8 @@ def main():
     year = 0
     epochs = 1
     #single_test(year, epochs)
-    multi_test_year(epochs)
-    #multi_test_epochs(year)
+    #multi_test_year(epochs)
+    multi_test_epochs(year)
 
 
 
@@ -94,10 +94,10 @@ def multi_test_epochs(year):
     file.
     """
     #list of epochs
-    epochs = [25,50,75,100,125]
+    epochs = [25,50,75,100,125,150, 175]
 
     #number of models to generate for each start year
-    count = 5
+    count = 50
     output = []
     train_avgs = []
     test_avgs = []
