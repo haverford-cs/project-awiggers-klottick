@@ -19,11 +19,10 @@ output_file = "results.txt"
 
 def main():
     year = 0
-    epochs = 100
-    batch_size = 200
+    epochs = 1
     #single_test(year, epochs)
-    #multi_test_year(epochs)
-    multi_test_epochs(year)
+    multi_test_year(epochs)
+    #multi_test_epochs(year)
 
 
 
@@ -37,10 +36,12 @@ def multi_test_year(epochs):
     file.
     """
     #list of start years
-    #years = [1979, 1985, 1990, 1995, 2000, 2005, 2010,2012]
+    years = [1979, 1985, 1990, 1995, 2000, 2005, 2010,2012]
+    '''
     years = []
     for i in range(18):
         years.append(2*i + 1979)
+    '''
 
     #number of models to generate for each start year
     count = 1
@@ -61,7 +62,9 @@ def multi_test_year(epochs):
             s += str(results[0]) + ", " + str(results[1])
             output.append(s)
             #get training and testing scores
-            train_scores.append(results[0])
+            print(results)
+            print(history.history["sparse_categorical_accuracy"][-1])
+            train_scores.append(history.history["sparse_categorical_accuracy"][-1])
             test_scores.append(results[1])
 
         train_sum = 0
@@ -109,7 +112,7 @@ def multi_test_epochs(year):
             history,results,confusionMatrix = runModel(year, epoch)
             print(str(epoch) + " " + str(i))
             #get training and testing scores
-            train_scores.append(results[0])
+            train_scores.append(history.history["sparse_categorical_accuracy"][-1])
             test_scores.append(results[1])
 
         train_sum = 0
@@ -190,11 +193,10 @@ def runModel(startYear, epochs):
     train_data = np.array(train_data)
     test_data = np.array(test_data)
     current_data = np.array(current_data)
-    print(current_data.shape)
 
     #shuffle training data
     np.random.shuffle(train_data)
-    np.random.shuffle(test_data)
+    #np.random.shuffle(test_data)
 
     #split features and labels
     y_train = train_data[:,-1]
@@ -234,8 +236,8 @@ def runModel(startYear, epochs):
 
     confusionMatrix = generateConfusionMatrix(X_test, y_test, model)
 
-    predictions = model.predict(X_cur)
-    print(predictions)
+    #predictions = model.predict(X_cur)
+    #print(predictions)
 
     keras.backend.clear_session()
     return history,results,confusionMatrix
