@@ -99,9 +99,6 @@ def read_csv(source_file, min_year):
                 else:
                     datapoint.append(-1*float(row[7]))
                 #overUnder
-                print(line_count)
-                print(row[8])
-                print(row[8] == ' ')
                 datapoint.append(float(row[8]))
                 #temperature
                 datapoint.append(float(row[10]))

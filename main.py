@@ -91,7 +91,7 @@ def multi_test_epochs(year):
     Then graphs the results.
     """
     #list of epochs and batch sizes to use
-    epochs = [1,5,10,25]
+    epochs = [5,10,25]
     batches = [25,50,100,200,300]
 
     #number of models to generate for epoch/batch size combination
@@ -152,7 +152,6 @@ def runModel(startYear, epochs, batch_size):
     #shuffle training data
     np.random.shuffle(train_data)
     np.random.shuffle(test_data)
-    val_data = test_data
 
     #split features and labels
     y_train = train_data[:,-1]
@@ -161,15 +160,10 @@ def runModel(startYear, epochs, batch_size):
     y_test = test_data[:,-1]
     X_test = test_data
     X_test = np.delete(X_test, -1, axis=1)
-    y_val = val_data[:,-1]
-    X_val = val_data
-    X_val = np.delete(X_val, -1, axis=1)
     X_train = np.asarray(X_train, dtype=np.float32)
     y_train = np.asarray(y_train, dtype=np.int32)
     X_test = np.asarray(X_test, dtype=np.float32)
     y_test = np.asarray(y_test, dtype=np.int32)
-    X_val = np.asarray(X_val, dtype=np.float32)
-    y_val = np.asarray(y_val, dtype=np.int32)
 
     #used for running tests on games that have yet to happen
     y_cur = current_data[:,-1]
@@ -184,13 +178,12 @@ def runModel(startYear, epochs, batch_size):
     std_pixel = X_train.std(keepdims=True)
     X_train = (X_train - mean_pixel) / std_pixel
     X_test = (X_test - mean_pixel) / std_pixel
-    X_val = (X_val - mean_pixel) / std_pixel
     X_cur = (X_cur - mean_pixel) / std_pixel
 
     #train model
     n,p = X_train.shape
     model = get_compiled_model(p, keras.optimizers.Adam())
-    history = train(X_train, y_train, epochs, model, (X_val, y_val), batch_size)
+    history = train(X_train, y_train, epochs, model, batch_size)
 
 
     #test model
@@ -208,7 +201,7 @@ def runModel(startYear, epochs, batch_size):
 
 
 
-def train(X, y, epochs, model, val_data, batch_size):
+def train(X, y, epochs, model, batch_size):
     """
     fit the given training data (X,y) to given model.
     Use given validation data and batch size.
@@ -299,10 +292,9 @@ def plotEpochData(epochs, batches, epoch_lines) :
     """
     generate plot
     """
-    plt.plot(batches,epoch_lines[0], c='b', label = "1")
-    plt.plot(batches,epoch_lines[1],c ='r', label = "5")
-    plt.plot(batches,epoch_lines[2], c='g', label = "10")
-    plt.plot(batches,epoch_lines[3],c ='y', label = "25")
+    plt.plot(batches,epoch_lines[0], c='b', label = "5 epochs")
+    plt.plot(batches,epoch_lines[1],c ='r', label = "10 epochs")
+    plt.plot(batches,epoch_lines[2], c='g', label = "25 epochs")
     plt.title("Accuracy for Epochs by Batch Size")
     plt.legend()
     plt.xlabel("Batch Size", fontsize = 16)
