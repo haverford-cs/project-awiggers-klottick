@@ -79,7 +79,8 @@ def read_csv(source_file, min_year):
         #creating one datapoint for each game
         for row in csv_reader:
             #only using games after odds were given
-            if line_count >= 2503 and row[9] != '':
+            if line_count >= 2503 and row[8] != ' ' and row[8] != '' and \
+                 row[10] != ' ' and row[10] != '':
                 datapoint = []
                 #schedule season
                 year = int(row[1])-1979
@@ -98,6 +99,9 @@ def read_csv(source_file, min_year):
                 else:
                     datapoint.append(-1*float(row[7]))
                 #overUnder
+                print(line_count)
+                print(row[8])
+                print(row[8] == ' ')
                 datapoint.append(float(row[8]))
                 #temperature
                 datapoint.append(float(row[10]))

@@ -21,9 +21,9 @@ def main():
     year = 0
     epochs = 10
     batch_size = 200
-    single_test(year, epochs, batch_size)
+    #single_test(year, epochs, batch_size)
     #multi_test_year(epochs, batch_size)
-    #multi_test_epochs(year)
+    multi_test_epochs(year)
 
 
 
@@ -129,7 +129,7 @@ def single_test(year, epochs, batch_size):
     """
     history,results,confusionMatrix = runModel(year, epochs, batch_size)
 
-    print_epoch_scores(history)
+    #print_epoch_scores(history)
     print(results)
     print(confusionMatrix)
     print(get_bookie_score(source_file))
@@ -152,9 +152,7 @@ def runModel(startYear, epochs, batch_size):
     #shuffle training data
     np.random.shuffle(train_data)
     np.random.shuffle(test_data)
-    val_data = np.split(test_data, 2)
-    #test_data = val_data[0]
-    val_data = val_data[1]
+    val_data = test_data
 
     #split features and labels
     y_train = train_data[:,-1]
@@ -174,13 +172,12 @@ def runModel(startYear, epochs, batch_size):
     y_val = np.asarray(y_val, dtype=np.int32)
 
     #used for running tests on games that have yet to happen
-    '''
     y_cur = current_data[:,-1]
     X_cur = current_data
     X_cur = np.delete(X_cur, -1, axis=1)
     X_cur = np.asarray(X_cur, dtype=np.float32)
     y_cur = np.asarray(y_cur, dtype=np.int32)
-    '''
+
 
     #normalize data
     mean_pixel = X_train.mean(keepdims=True)
@@ -188,7 +185,7 @@ def runModel(startYear, epochs, batch_size):
     X_train = (X_train - mean_pixel) / std_pixel
     X_test = (X_test - mean_pixel) / std_pixel
     X_val = (X_val - mean_pixel) / std_pixel
-    #X_cur = (X_cur - mean_pixel) / std_pixel
+    X_cur = (X_cur - mean_pixel) / std_pixel
 
     #train model
     n,p = X_train.shape
@@ -201,8 +198,8 @@ def runModel(startYear, epochs, batch_size):
 
     confusionMatrix = generateConfusionMatrix(X_test, y_test, model)
 
-    #predictions = model.predict(X_cur)
-    #print(predictions)
+    predictions = model.predict(X_cur)
+    print(predictions)
 
     keras.backend.clear_session()
     return history,results,confusionMatrix
@@ -216,7 +213,7 @@ def train(X, y, epochs, model, val_data, batch_size):
     fit the given training data (X,y) to given model.
     Use given validation data and batch size.
     """
-    history = model.fit(X, y, batch_size=batch_size, epochs=epochs, validation_data = val_data)
+    history = model.fit(X, y, batch_size=batch_size, epochs=epochs, validation_split = 0)
     return history
 
 def test(x_test, y_test, model, batch_size = 1):
