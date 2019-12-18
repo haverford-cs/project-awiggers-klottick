@@ -5,6 +5,7 @@ Date: 12/17/19
 """
 
 from process import *
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import Dense
@@ -21,6 +22,7 @@ def main():
     epochs = 5
     batch_size = 50
     single_test(year, epochs, batch_size)
+    #y = energyusage.evaluate(multi_test, epochs, batch_size, printToScreen = False, pdf = True)
     #multi_test(epochs, batch_size)
 
 
@@ -34,34 +36,51 @@ def multi_test(epochs, batch_size):
     models for a given year. Then prints results to an output
     file.
     """
-    years = [1979, 1985, 1990, 1995, 2000, 2005, 2010, 2012]
-    count = 20
+    #list of start years
+    #years = [1979, 1985, 1990, 1995, 2000, 2005, 2010,2012]
+    years = []
+    for i in range(18):
+        years.append(2*i + 1979)
+
+    #number of models to generate for each start year
+    count = 200
     output = []
+    train_avgs = []
+    test_avgs = []
+
     output.append("year,test: train acc, test acc")
     for year in years:
         train_scores = []
         test_scores = []
 
+        #create a 'count' number of models
         for i in range(count):
             history,results = runModel(year, epochs, batch_size)
+            print(str(year) + " " + str(i))
             s = str(year) + " test " + str(i) + ": "
             s += str(results[0]) + ", " + str(results[1])
             output.append(s)
+            #get training and testing scores
             train_scores.append(results[0])
             test_scores.append(results[1])
 
         train_sum = 0
         test_sum = 0
+        #take averages for each year
         for i in range(count):
             train_sum += train_scores[i]
             test_sum += test_scores[i]
         train_avg = train_sum / count
         test_avg = test_sum / count
+        train_avgs.append(train_avg)
+        test_avgs.append(test_avg)
         s = str(year) + " averages " + str(i) + ": "
         s += str(train_avg) + ", " + str(test_avg)
         output.append(s)
 
+
     write_output(output)
+    plotData(years, train_avgs, test_avgs)
 
 
 def single_test(year, epochs, batch_size):
@@ -95,7 +114,7 @@ def runModel(startYear, epochs, batch_size):
     np.random.shuffle(test_data)
     #test_data = np.delete(test_data, -1, axis=0)
     val_data = np.split(test_data, 2)
-    test_data = val_data[0]
+    #test_data = val_data[0]
     val_data = val_data[1]
 
     #split features and labels
@@ -159,9 +178,6 @@ def get_uncompiled_model(p):
     fully-connected (dense) layer -> ReLU -> ReLU -> fully connected layer.
     """
     inputs = tf.keras.Input(shape = (p,), name = "input")
-    #x = Dense(64,
-        #kernel_regularizer=regularizers.l2(0.01),
-        #activity_regularizer=regularizers.l1(0.01))(inputs)
     x = Dense(100, tf.nn.relu)(inputs)
     x = Dense(10, tf.nn.relu)(x)
     outputs = Dense(2, tf.nn.softmax)(x)
@@ -179,6 +195,7 @@ def get_compiled_model(p,optimizer):
               loss=keras.losses.SparseCategoricalCrossentropy(),
               # List of metrics to monitor
               metrics=[keras.metrics.SparseCategoricalAccuracy()])
+
     return model
 
 def print_epoch_scores(history):
@@ -202,6 +219,19 @@ def print_epoch_scores(history):
         else:
             print(str(i) + ': ' + str(acc))
         i += 1
+
+def plotData(years, train_acc, test_acc) :
+    """
+    generate plot
+    """
+    plt.plot(years,train_acc, c='b', label = "Training Data")
+    plt.plot(years,test_acc,c ='r', label = "Test Data")
+    plt.title("Accuracy by Year")
+    plt.legend()
+    plt.xlabel("Year", fontsize = 16)
+    plt.ylabel("Accuracy", fontsize = 16)
+    plt.show()
+
 
 def write_output(output):
     """

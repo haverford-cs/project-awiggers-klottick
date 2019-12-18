@@ -5,3 +5,5 @@ Peaks earlier with full dataset.
 achieving best test accuracy at 2005 mark (with 5 epochs, batch size of 50, and no ties). Afterwards training accuracy increases but test accuracy goes down.
 
 Including ties reduces accuracy by 1-2%.
+
+Excluding odds reduces accuracy by as much as 7%.
