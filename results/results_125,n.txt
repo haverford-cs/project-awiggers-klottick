@@ -1,3 +1,5 @@
+Note: individual training accuracies are incorrect, but
+the averages are fine.
 year,test: train acc, test acc
 1979 test 0: 0.6270505575945738, 0.63829786
 1979 test 1: 0.6315928060510132, 0.640801

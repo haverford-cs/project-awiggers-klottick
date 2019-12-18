@@ -65,7 +65,7 @@ def multi_test_year(epochs):
             history,results,confusionMatrix = runModel(year, epochs)
             print(str(year) + " " + str(i))
             s = str(year) + " test " + str(i) + ": "
-            s += str(results[0]) + ", " + str(results[1])
+            s += str(history.history["sparse_categorical_accuracy"][-1]) + ", " + str(results[1])
             output.append(s)
             #get training and testing scores
             print(results)
