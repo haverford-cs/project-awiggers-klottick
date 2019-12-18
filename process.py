@@ -1,17 +1,28 @@
+"""
+Import and parse football data.
+Author: Alton Wiggers, Kadan Lottick
+Date: 12/17/19
+"""
+
 import csv
 source_file = "spreadspoke_scores.csv"
 #dest_file
 
 def main():
     read_csv(source_file,1979)
+
 def get_bookie_score(source_file):
+    """
+    check predicted winners against actual results
+    for all games in 2015-2017 seasons
+    """
     with open(source_file) as csv_file:
         total = 0
         correct = 0
         csv_reader = csv.reader(csv_file, delimiter =",")
         line_count = 1
         for row in csv_reader:
-            if line_count >= 2503:
+            if line_count >= 2503 and int(row[1]) >= 2015:
                 if int(row[13]) > int(row[14]):
                     if row[3] == row[6]:
                         correct+=1
@@ -24,7 +35,14 @@ def get_bookie_score(source_file):
                 total+=1
             line_count+=1
         return correct, total, correct /total
+
 def read_csv(source_file, min_year):
+    """
+    Parse in each line of .csv file as a datapoint.
+    Convert relevant lines to analyzable features.
+    Divide points into training and testing data.
+    Discard datapoints from seasons before given min_year.
+    """
     train_data = []
     test_data = []
 
@@ -57,7 +75,9 @@ def read_csv(source_file, min_year):
     with open(source_file) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter =",")
         line_count = 1
+        #creating one datapoint for each game
         for row in csv_reader:
+            #only using games after odds were given
             if line_count >= 2503 and row[9] != '':
                 datapoint = []
                 #schedule season
@@ -102,26 +122,27 @@ def read_csv(source_file, min_year):
                         datapoint.append(winMatrix[year][i][j])
 
                 #assign label and update records
-                label = 1
+                label = 0
                 #home wins
                 if int(row[13]) > int(row[14]):
-                    label = 2
+                    label = 0
                     records[year][home_id][0] +=1
                     records[year][away_id][1] +=1
                     winMatrix[year][home_id][away_id] +=1
                 #away wins
                 elif int(row[13]) < int(row[14]):
-                    label = 0
+                    label = 1
                     records[year][home_id][1] +=1
                     records[year][away_id][0] +=1
                     winMatrix[year][away_id][home_id] +=1
                 #tie
                 else:
+                    label = 2
                     records[year][home_id][2] +=1
                     records[year][away_id][2] +=1
 
                 datapoint.append(label)
-                if year + 1979 >= min_year:
+                if year + 1979 >= min_year and label < 2:
                     if year + 1979 < 2015:
                         train_data.append(datapoint)
                     else:
@@ -130,6 +151,12 @@ def read_csv(source_file, min_year):
         return train_data,test_data
 
 def weeks(week):
+    """
+    Given a week, create a list of one-hot
+    features for each possible week and
+    enable only the given value
+    """
+    
     list = []
     switcher = {
         "1": 0,
@@ -163,6 +190,14 @@ def weeks(week):
     return list
 
 def team_vals(team_id):
+    """
+    Given a team, create a list of one-hot
+    features for each possible team and
+    enable only the given value.
+    Return the team value for generating
+    other features.
+    """
+
     switch = {
         "NE":0,
         "BUF":1,
