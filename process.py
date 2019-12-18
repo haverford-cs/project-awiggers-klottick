@@ -50,7 +50,7 @@ def read_csv(source_file, min_year):
     #array indexed by years (subtract of 1979 to get index),
     #teams (assigned indexes by team_vals), wins/losses/ties (0/1/2)
     records = []
-    for i in range(40):
+    for i in range(41):
         year = []
         records.append(year)
         for j in range(32):
@@ -63,7 +63,7 @@ def read_csv(source_file, min_year):
     #teams (assigned indexes by team_vals), teams they've played
     #the value is the number of times the 1st team has beaten the 2nd that season
     winMatrix = []
-    for i in range(40):
+    for i in range(41):
         year = []
         winMatrix.append(year)
         for j in range(32):

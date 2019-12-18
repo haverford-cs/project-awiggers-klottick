@@ -21,9 +21,9 @@ def main():
     year = 0
     epochs = 10
     batch_size = 200
-    #single_test(year, epochs, batch_size)
+    single_test(year, epochs, batch_size)
     #multi_test_year(epochs, batch_size)
-    multi_test_epochs(year)
+    #multi_test_epochs(year)
 
 
 
@@ -146,6 +146,8 @@ def runModel(startYear, epochs, batch_size):
     train_data,test_data,current_data = read_csv(source_file, startYear)
     train_data = np.array(train_data)
     test_data = np.array(test_data)
+    current_data = np.array(current_data)
+    print(current_data.shape)
 
     #shuffle training data
     np.random.shuffle(train_data)
@@ -230,8 +232,7 @@ def get_uncompiled_model(p):
     fully-connected (dense) layer -> ReLU -> ReLU -> fully connected layer.
     """
     inputs = tf.keras.Input(shape = (p,), name = "input")
-    x = Dense(100, tf.nn.relu)(inputs)
-    x = Dense(10, tf.nn.relu)(x)
+    x = Dense(500, tf.nn.relu)(inputs)
     outputs = Dense(2, tf.nn.softmax)(x)
     model = tf.keras.Model(inputs = inputs, outputs = outputs)
     return model
