@@ -28,3 +28,8 @@
  *Re-finalize model hyperparameters
  *Generate graphs for powerpoint presentation
 
+## References
+* Football dataset. https://www.kaggle.com/tobycrabtree/nfl-scores-and-betting-data.
+* sci-kit learn. https://scikit-learn.org/stable/.
+* Rory Bunker and Fadi Thabtah. A machine learning framework for sportresult prediction. Applied Computing and Informatics, 15, 09 2017.
+* tensorflow keras https://www.tensorflow.org/guide/keras
