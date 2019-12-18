@@ -22,7 +22,7 @@ def get_bookie_score(source_file):
         csv_reader = csv.reader(csv_file, delimiter =",")
         line_count = 1
         for row in csv_reader:
-            if line_count >= 2503 and int(row[1]) >= 2015:
+            if line_count >= 2503 and int(row[1]) >= 2015 and int(row[1]) < 2019:
                 if int(row[13]) > int(row[14]):
                     if row[3] == row[6]:
                         correct+=1
