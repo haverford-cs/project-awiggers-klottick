@@ -22,8 +22,8 @@ def main():
     epochs = 10
     batch_size = 200
     #single_test(year, epochs, batch_size)
-    multi_test_year(epochs, batch_size)
-    #multi_test_epochs(year)
+    #multi_test_year(epochs, batch_size)
+    multi_test_epochs(year)
 
 
 
@@ -95,7 +95,7 @@ def multi_test_epochs(year):
     batches = [25,50,100,200,300]
 
     #number of models to generate for epoch/batch size combination
-    count = 50
+    count = 40
     epoch_lines = []
 
     for epoch in epochs:
@@ -172,11 +172,13 @@ def runModel(startYear, epochs, batch_size):
     y_val = np.asarray(y_val, dtype=np.int32)
 
     #used for running tests on games that have yet to happen
+    '''
     y_cur = current_data[:,-1]
     X_cur = current_data
     X_cur = np.delete(X_cur, -1, axis=1)
     X_cur = np.asarray(X_cur, dtype=np.float32)
     y_cur = np.asarray(y_cur, dtype=np.int32)
+    '''
 
     #normalize data
     mean_pixel = X_train.mean(keepdims=True)
@@ -184,7 +186,7 @@ def runModel(startYear, epochs, batch_size):
     X_train = (X_train - mean_pixel) / std_pixel
     X_test = (X_test - mean_pixel) / std_pixel
     X_val = (X_val - mean_pixel) / std_pixel
-    X_cur = (X_cur - mean_pixel) / std_pixel
+    #X_cur = (X_cur - mean_pixel) / std_pixel
 
     #train model
     n,p = X_train.shape
@@ -197,8 +199,8 @@ def runModel(startYear, epochs, batch_size):
 
     confusionMatrix = generateConfusionMatrix(X_test, y_test, model)
 
-    predictions = model.predict(X_cur)
-    print(predictions)
+    #predictions = model.predict(X_cur)
+    #print(predictions)
 
     keras.backend.clear_session()
     return history,results,confusionMatrix
