@@ -45,11 +45,12 @@ def read_csv(source_file, min_year):
     """
     train_data = []
     test_data = []
+    current_data = []
 
     #array indexed by years (subtract of 1979 to get index),
     #teams (assigned indexes by team_vals), wins/losses/ties (0/1/2)
     records = []
-    for i in range(39):
+    for i in range(40):
         year = []
         records.append(year)
         for j in range(32):
@@ -62,7 +63,7 @@ def read_csv(source_file, min_year):
     #teams (assigned indexes by team_vals), teams they've played
     #the value is the number of times the 1st team has beaten the 2nd that season
     winMatrix = []
-    for i in range(39):
+    for i in range(40):
         year = []
         winMatrix.append(year)
         for j in range(32):
@@ -109,12 +110,20 @@ def read_csv(source_file, min_year):
                     datapoint.append(1)
 
                 #add records for home and away teams this season
-                datapoint.append(records[year][home_id][0])
-                datapoint.append(records[year][home_id][1])
-                datapoint.append(records[year][home_id][2])
-                datapoint.append(records[year][away_id][0])
-                datapoint.append(records[year][away_id][1])
-                datapoint.append(records[year][away_id][2])
+                if not year +1979 == 2019:
+                    datapoint.append(records[year][home_id][0])
+                    datapoint.append(records[year][home_id][1])
+                    datapoint.append(records[year][home_id][2])
+                    datapoint.append(records[year][away_id][0])
+                    datapoint.append(records[year][away_id][1])
+                    datapoint.append(records[year][away_id][2])
+                else:
+                    datapoint.append(float(row[17]))
+                    datapoint.append(float(row[18]))
+                    datapoint.append(float(row[19]))
+                    datapoint.append(float(row[20]))
+                    datapoint.append(float(row[21]))
+                    datapoint.append(float(row[22]))
 
                 #append matrix of whose beaten who
                 for i in range(32):
@@ -145,10 +154,13 @@ def read_csv(source_file, min_year):
                 if year + 1979 >= min_year and label < 2:
                     if year + 1979 < 2015:
                         train_data.append(datapoint)
-                    else:
+                    elif year + 1979 < 2019:
                         test_data.append(datapoint)
+                    else:
+                        current_data.append(datapoint)
             line_count +=1
-        return train_data,test_data
+
+        return train_data,test_data,current_data
 
 def weeks(week):
     """
@@ -156,7 +168,7 @@ def weeks(week):
     features for each possible week and
     enable only the given value
     """
-    
+
     list = []
     switcher = {
         "1": 0,

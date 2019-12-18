@@ -19,11 +19,11 @@ output_file = "results.txt"
 
 def main():
     year = 0
-    epochs = 5
-    batch_size = 50
+    epochs = 10
+    batch_size = 200
     #single_test(year, epochs, batch_size)
-    #multi_test_year(epochs, batch_size)
-    multi_test_epochs(year)
+    multi_test_year(epochs, batch_size)
+    #multi_test_epochs(year)
 
 
 
@@ -43,7 +43,7 @@ def multi_test_year(epochs, batch_size):
         years.append(2*i + 1979)
 
     #number of models to generate for each start year
-    count = 200
+    count = 100
     output = []
     train_avgs = []
     test_avgs = []
@@ -129,7 +129,6 @@ def single_test(year, epochs, batch_size):
     """
     history,results,confusionMatrix = runModel(year, epochs, batch_size)
 
-    #print(history.history)
     print_epoch_scores(history)
     print(results)
     print(confusionMatrix)
@@ -144,20 +143,18 @@ def runModel(startYear, epochs, batch_size):
     a fully connected neural network.
     """
     #initialize test and training data
-    train_data,test_data = read_csv(source_file, startYear)
+    train_data,test_data,current_data = read_csv(source_file, startYear)
     train_data = np.array(train_data)
     test_data = np.array(test_data)
 
     #shuffle training data
     np.random.shuffle(train_data)
     np.random.shuffle(test_data)
-    #test_data = np.delete(test_data, -1, axis=0)
     val_data = np.split(test_data, 2)
     #test_data = val_data[0]
     val_data = val_data[1]
 
     #split features and labels
-    test_data = np.array(test_data)
     y_train = train_data[:,-1]
     X_train = train_data
     X_train = np.delete(X_train, -1, axis=1)
@@ -174,12 +171,20 @@ def runModel(startYear, epochs, batch_size):
     X_val = np.asarray(X_val, dtype=np.float32)
     y_val = np.asarray(y_val, dtype=np.int32)
 
+    #used for running tests on games that have yet to happen
+    y_cur = current_data[:,-1]
+    X_cur = current_data
+    X_cur = np.delete(X_cur, -1, axis=1)
+    X_cur = np.asarray(X_cur, dtype=np.float32)
+    y_cur = np.asarray(y_cur, dtype=np.int32)
+
     #normalize data
     mean_pixel = X_train.mean(keepdims=True)
     std_pixel = X_train.std(keepdims=True)
     X_train = (X_train - mean_pixel) / std_pixel
     X_test = (X_test - mean_pixel) / std_pixel
     X_val = (X_val - mean_pixel) / std_pixel
+    X_cur = (X_cur - mean_pixel) / std_pixel
 
     #train model
     n,p = X_train.shape
@@ -192,10 +197,10 @@ def runModel(startYear, epochs, batch_size):
 
     confusionMatrix = generateConfusionMatrix(X_test, y_test, model)
 
+    predictions = model.predict(X_cur)
+    print(predictions)
+
     keras.backend.clear_session()
-
-
-
     return history,results,confusionMatrix
 
 
@@ -219,7 +224,7 @@ def test(x_test, y_test, model, batch_size = 1):
 
 def get_uncompiled_model(p):
     """
-    Compiles a fully-connected neural network; the architecture is:
+    Creates a fully-connected neural network; the architecture is:
     fully-connected (dense) layer -> ReLU -> ReLU -> fully connected layer.
     """
     inputs = tf.keras.Input(shape = (p,), name = "input")
@@ -231,7 +236,7 @@ def get_uncompiled_model(p):
 
 def get_compiled_model(p,optimizer):
     """
-    Generates a model with given feature size
+    Generates and compiles a model with given feature size
     and desired optimizer.
     """
     model = get_uncompiled_model(p)
