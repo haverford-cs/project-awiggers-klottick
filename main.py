@@ -19,16 +19,16 @@ output_file = "results.txt"
 
 def main():
     year = 0
-    epochs = 10
+    epochs = 100
     batch_size = 200
-    #single_test(year, epochs, batch_size)
-    #multi_test_year(epochs, batch_size)
+    #single_test(year, epochs)
+    #multi_test_year(epochs)
     multi_test_epochs(year)
 
 
 
 
-def multi_test_year(epochs, batch_size):
+def multi_test_year(epochs):
     """
     Create multiple models using the given epochs and
     batch_size. Runs several times with datasets of games
@@ -43,7 +43,7 @@ def multi_test_year(epochs, batch_size):
         years.append(2*i + 1979)
 
     #number of models to generate for each start year
-    count = 100
+    count = 1
     output = []
     train_avgs = []
     test_avgs = []
@@ -55,7 +55,7 @@ def multi_test_year(epochs, batch_size):
 
         #create a 'count' number of models
         for i in range(count):
-            history,results,confusionMatrix = runModel(year, epochs, batch_size)
+            history,results,confusionMatrix = runModel(year, epochs)
             print(str(year) + " " + str(i))
             s = str(year) + " test " + str(i) + ": "
             s += str(results[0]) + ", " + str(results[1])
@@ -84,6 +84,49 @@ def multi_test_year(epochs, batch_size):
 
 def multi_test_epochs(year):
     """
+    Create multiple models using the given epochs and
+    batch_size. Runs several times with datasets of games
+    at and after benchmark years, averaging the results of
+    models for a given year. Then prints results to an output
+    file.
+    """
+    #list of epochs
+    epochs = [25,50,75,100,125]
+
+    #number of models to generate for each start year
+    count = 5
+    output = []
+    train_avgs = []
+    test_avgs = []
+
+    output.append("year,test: train acc, test acc")
+    for epoch in epochs:
+        train_scores = []
+        test_scores = []
+
+        #create a 'count' number of models
+        for i in range(count):
+            history,results,confusionMatrix = runModel(year, epoch)
+            print(str(epoch) + " " + str(i))
+            #get training and testing scores
+            train_scores.append(results[0])
+            test_scores.append(results[1])
+
+        train_sum = 0
+        test_sum = 0
+        #take averages for each year
+        for i in range(count):
+            train_sum += train_scores[i]
+            test_sum += test_scores[i]
+        train_avg = train_sum / count
+        test_avg = test_sum / count
+        train_avgs.append(train_avg)
+        test_avgs.append(test_avg)
+
+    plotEpochData(epochs, train_avgs, test_avgs)
+
+def multi_test_epochsOLD(year):
+    """
     Create multiple models scaling epochs and batch size.
     Runs several times with datasets of games at and after
     given benchmark year, averaging the results of
@@ -91,8 +134,8 @@ def multi_test_epochs(year):
     Then graphs the results.
     """
     #list of epochs and batch sizes to use
-    epochs = [5,10,25]
-    batches = [25,50,100,200,300]
+    epochs = [5,10]
+    batches = [800,1000,1200,1400]
 
     #number of models to generate for epoch/batch size combination
     count = 40
@@ -118,16 +161,16 @@ def multi_test_epochs(year):
             test_avgs.append(test_avg)
         epoch_lines.append(test_avgs)
 
-    plotEpochData(epochs, batches, epoch_lines)
+    plotEpochDataOLD(epochs, batches, epoch_lines)
 
 
-def single_test(year, epochs, batch_size):
+def single_test(year, epochs):
     """
     Create a single model with dataset of given year
     using given epochs and batch_size. Then print results
     for the model.
     """
-    history,results,confusionMatrix = runModel(year, epochs, batch_size)
+    history,results,confusionMatrix = runModel(year, epochs)
 
     #print_epoch_scores(history)
     print(results)
@@ -135,7 +178,7 @@ def single_test(year, epochs, batch_size):
     print(get_bookie_score(source_file))
 
 
-def runModel(startYear, epochs, batch_size):
+def runModel(startYear, epochs):
     """
     Generate a dataset using the given startYear.
     Split into training, testing, and validation data
@@ -183,7 +226,7 @@ def runModel(startYear, epochs, batch_size):
     #train model
     n,p = X_train.shape
     model = get_compiled_model(p, keras.optimizers.Adam())
-    history = train(X_train, y_train, epochs, model, batch_size)
+    history = train(X_train, y_train, epochs, model, n)
 
 
     #test model
@@ -288,13 +331,25 @@ def plotData(years, train_acc, test_acc) :
     plt.ylabel("Accuracy", fontsize = 16)
     plt.show()
 
-def plotEpochData(epochs, batches, epoch_lines) :
+def plotEpochData(epochs, train_acc, test_acc) :
+    """
+    generate plot
+    """
+    plt.plot(epochs,train_acc, c='b', label = "Training Data")
+    plt.plot(epochs,test_acc,c ='r', label = "Test Data")
+    plt.title("Accuracy for Number of Epochs")
+    plt.legend()
+    plt.xlabel("Epochs", fontsize = 16)
+    plt.ylabel("Accuracy", fontsize = 16)
+    plt.show()
+
+def plotEpochDataOLD(epochs, batches, epoch_lines) :
     """
     generate plot
     """
     plt.plot(batches,epoch_lines[0], c='b', label = "5 epochs")
     plt.plot(batches,epoch_lines[1],c ='r', label = "10 epochs")
-    plt.plot(batches,epoch_lines[2], c='g', label = "25 epochs")
+    #plt.plot(batches,epoch_lines[2], c='g', label = "25 epochs")
     plt.title("Accuracy for Epochs by Batch Size")
     plt.legend()
     plt.xlabel("Batch Size", fontsize = 16)
