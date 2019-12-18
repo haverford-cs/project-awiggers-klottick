@@ -223,8 +223,7 @@ def get_uncompiled_model(p):
     fully-connected (dense) layer -> ReLU -> ReLU -> fully connected layer.
     """
     inputs = tf.keras.Input(shape = (p,), name = "input")
-    x = Dense(100, tf.nn.relu)(inputs)
-    x = Dense(10, tf.nn.relu)(x)
+    x = Dense(500, tf.nn.relu)(inputs)
     outputs = Dense(2, tf.nn.softmax)(x)
     model = tf.keras.Model(inputs = inputs, outputs = outputs)
     return model
