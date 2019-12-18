@@ -21,8 +21,8 @@ def main():
     year = 0
     epochs = 10
     batch_size = 200
-    #single_test(year, epochs, batch_size)
-    multi_test_year(epochs, batch_size)
+    single_test(year, epochs, batch_size)
+    #multi_test_year(epochs, batch_size)
     #multi_test_epochs(year)
 
 
@@ -146,6 +146,8 @@ def runModel(startYear, epochs, batch_size):
     train_data,test_data,current_data = read_csv(source_file, startYear)
     train_data = np.array(train_data)
     test_data = np.array(test_data)
+    current_data = np.array(current_data)
+    print(current_data.shape)
 
     #shuffle training data
     np.random.shuffle(train_data)
